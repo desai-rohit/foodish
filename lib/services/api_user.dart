@@ -94,26 +94,26 @@ class FavoriteService {
   }
 }
 
-Future<http.Response> addcart(productsID, user, image, name, restorantName,
-    gmail, price, itemcount, totalprice) async {
-  return await http.post(
-    Uri.parse('${link}cart'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, String>{
-      "productId": productsID,
-      'user': user,
-      'image': image,
-      'name': name,
-      'restorant_name': restorantName,
-      "restorant_gmail": gmail,
-      "price": price.toString(),
-      "itemcount": itemcount,
-      "totalprice": totalprice
-    }),
-  );
-}
+// Future<http.Response> addcart(productsID, user, image, name, restorantName,
+//     gmail, price, itemcount, totalprice) async {
+//   return await http.post(
+//     Uri.parse('${link}cart'),
+//     headers: <String, String>{
+//       'Content-Type': 'application/json; charset=UTF-8',
+//     },
+//     body: jsonEncode(<String, String>{
+//       "productId": productsID,
+//       'user': user,
+//       'image': image,
+//       'name': name,
+//       'restorant_name': restorantName,
+//       "restorant_gmail": gmail,
+//       "price": price.toString(),
+//       "itemcount": itemcount,
+//       "totalprice": totalprice
+//     }),
+//   );
+// }
 
 Future<http.Response> updateCart(id, itemcount, totalprice) async {
   return await http.put(
@@ -179,7 +179,9 @@ Future<http.Response> order(
     String? restorantGmail,
     String? price,
     String? countTotalPrice,
-    String? productid}) async {
+    String? productid,
+    String? orderid,
+    String? paymentid}) async {
   return await http.post(
     Uri.parse('${link}order'),
     headers: <String, String>{
@@ -191,12 +193,15 @@ Future<http.Response> order(
       'useremail': gmail,
       "image": image,
       "foodname": foodname,
+      "rating": "0",
       "restorant_name": restorantName,
       "restorant_gmail": restorantGmail,
       "price": price,
       "countTotalPrice": countTotalPrice,
       "orderaccepted": false,
       "ordership": false,
+      "orderid": orderid,
+      "paymentid": paymentid,
       "address": {
         "lat": lat,
         "lng": lng,
@@ -303,6 +308,27 @@ class ApiServices {
       return data;
     }
     return [];
+  }
+
+  Future<http.Response> addcart(productsID, user, image, name, restorantName,
+      gmail, price, itemcount, totalprice) async {
+    return await http.post(
+      Uri.parse('${link}cart'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "productId": productsID,
+        'user': user,
+        'image': image,
+        'name': name,
+        'restorant_name': restorantName,
+        "restorant_gmail": gmail,
+        "price": price.toString(),
+        "itemcount": itemcount,
+        "totalprice": totalprice
+      }),
+    );
   }
 }
 

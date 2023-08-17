@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery/config/golbal.dart';
+import 'package:food_delivery/commanWidget/comman_widget.dart';
+import 'package:food_delivery/pages/UserPages/login_page.dart';
 import 'package:food_delivery/pages/address/add_address.dart';
 import 'package:food_delivery/pages/myOrders/complete_order_page.dart';
 import 'package:food_delivery/pages/UserPages/update_profile.dart';
 import 'package:food_delivery/provider/user_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -44,7 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          currentEmail.toString(),
+                          value.currentEmail.toString(),
                           style: const TextStyle(
                               fontSize: 12, fontWeight: FontWeight.w500),
                         )
@@ -166,9 +168,25 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       //]
                     ],
-                  )
+                  ),
                 ],
               ),
+              bottomNavigationBar: Container(
+                  padding: const EdgeInsets.only(bottom: 100),
+                  child: button(
+                      context: context,
+                      name: "Logout",
+                      onPressd: () async {
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        prefs.remove('email');
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext ctx) =>
+                                    const LoginPage()));
+                      })),
             );
       //     } else {
       //       return Center(

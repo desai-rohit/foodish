@@ -17,7 +17,7 @@ class OrderModel {
   String useremail;
   String image;
   String foodname;
-  String rateing;
+  String rating;
   String restorantName;
   String price;
   String countTotalPrice;
@@ -34,7 +34,7 @@ class OrderModel {
       required this.useremail,
       required this.image,
       required this.foodname,
-      required this.rateing,
+      required this.rating,
       required this.restorantName,
       required this.price,
       required this.countTotalPrice,
@@ -51,7 +51,7 @@ class OrderModel {
       useremail: json["useremail"],
       image: json["image"],
       foodname: json["foodname"],
-      rateing: json["rateing"],
+      rating: json["rating"],
       restorantName: json["restorant_name"],
       price: json["price"],
       countTotalPrice: json["countTotalPrice"],
@@ -69,7 +69,7 @@ class OrderModel {
         "useremail": useremail,
         "image": image,
         "foodname": foodname,
-        "rateing": rateing,
+        "rateing": rating,
         "restorant_name": restorantName,
         "price": price,
         "countTotalPrice": countTotalPrice,

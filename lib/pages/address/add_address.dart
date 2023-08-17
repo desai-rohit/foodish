@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery/config/golbal.dart';
 import 'package:food_delivery/pages/payment/payment_page.dart';
 import 'package:food_delivery/provider/user_provider.dart';
 import 'package:food_delivery/services/api_user.dart';
@@ -127,7 +126,7 @@ class _AddAddressState extends State<AddAddress> {
                                             backgroundColor: Colors.red),
                                         onPressed: () {
                                           updateUser(
-                                                  gmail: currentEmail!,
+                                                  gmail: provider.currentEmail!,
                                                   lat: lat.toString(),
                                                   lng: lng.toString(),
                                                   flat: provider.addflat.text,

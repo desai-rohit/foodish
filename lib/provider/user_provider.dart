@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery/config/golbal.dart';
 import 'package:food_delivery/models/add_cart.dart';
 import 'package:food_delivery/models/favorite_model.dart';
 import 'package:food_delivery/models/order_model.dart';
@@ -13,6 +12,7 @@ import 'package:food_delivery/services/api_user.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class UserProvider extends ChangeNotifier {
   //signup page controller
@@ -40,7 +40,7 @@ class UserProvider extends ChangeNotifier {
   String postalCode = "";
 
   //currentemail
-  //String? currentEmail;
+  String? currentEmail;
 
   List<UserApi> data = [];
   bool validate = false;
@@ -121,6 +121,15 @@ class UserProvider extends ChangeNotifier {
 
   String favoriteId = '';
   String cartDataId = '';
+
+  String? orderId;
+
+  Connectivity connectivity = Connectivity();
+
+  isloading(truefalse) {
+    islaoding = truefalse;
+    notifyListeners();
+  }
 
   emailadd(email) {
     currentEmail = email;
@@ -286,6 +295,7 @@ class UserProvider extends ChangeNotifier {
   }
 
   addLocation(lat, lng) async {
+    islaoding = true;
     List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
 
     Placemark place = placemarks[0];
@@ -295,12 +305,16 @@ class UserProvider extends ChangeNotifier {
     sublocality = place.subLocality!;
     postalCode = place.postalCode!;
 
+    islaoding = false;
+
     notifyListeners();
   }
 
   distance(lat1, lng1, lat2, lng2) {
+    islaoding = true;
     distanceInMeters = Geolocator.distanceBetween(lat1, lng1, lat2, lng2);
     distanceInKm = distanceInMeters! * 0.001;
+    islaoding = false;
     notifyListeners();
   }
 
@@ -348,22 +362,29 @@ class UserProvider extends ChangeNotifier {
   }
 
   homePageProductsLoad() async {
-    for (var i = 0; i < restaurantListData.length; i++) {
-      if (Geolocator.distanceBetween(
+    islaoding = true;
+    await getUser();
+    await getRestaurants().then((value) {
+      for (var i = 0; i < restaurantListData.length; i++) {
+        if (Geolocator.distanceBetween(
+                double.parse(user!.address![0].lat),
+                double.parse(user!.address![0].lng),
+                double.parse(restaurantListData[i].address[0].lat),
+                double.parse(restaurantListData[i].address[0].lng)) <=
+            7000) {
+          // await updategmail(restaurantListData[i].gmail);
+          getProducts(gmail: restaurantListData[i].gmail);
+          restauramtGmail = restaurantListData[i].gmail;
+          homePageDistance(
               double.parse(user!.address![0].lat),
               double.parse(user!.address![0].lng),
               double.parse(restaurantListData[i].address[0].lat),
-              double.parse(restaurantListData[i].address[0].lng)) <=
-          7000) {
-        // await updategmail(restaurantListData[i].gmail);
-        restauramtGmail = restaurantListData[i].gmail;
-        homePageDistance(
-            double.parse(user!.address![0].lat),
-            double.parse(user!.address![0].lng),
-            double.parse(restaurantListData[i].address[0].lat),
-            double.parse(restaurantListData[i].address[0].lng));
+              double.parse(restaurantListData[i].address[0].lng));
+        }
       }
-    }
+    });
+    islaoding = false;
+
     notifyListeners();
   }
 
@@ -397,10 +418,19 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<void> getsldieimage() async {
-    islaoding = true;
+    // islaoding = true;
     notifyListeners();
     final response = await _apiServices.sildeImage();
     _sildelist = response;
+    // islaoding = false;
+    notifyListeners();
+  }
+
+  Future<void> addtocart(productsID, user, image, name, restorantName, gmail,
+      price, itemcount, totalprice) async {
+    islaoding = true;
+    await _apiServices.addcart(productsID, user, image, name, restorantName,
+        gmail, price, itemcount, totalprice);
     islaoding = false;
     notifyListeners();
   }

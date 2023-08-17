@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/commanWidget/comman_widget.dart';
-import 'package:food_delivery/config/golbal.dart';
 import 'package:food_delivery/provider/user_provider.dart';
 import 'package:food_delivery/services/api_user.dart';
 import 'package:provider/provider.dart';
@@ -98,7 +97,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                       if (widget.data.password ==
                           updatePasswordController.text) {
                         updateUserName(
-                            gmail: currentEmail.toString(),
+                            gmail: value.currentEmail.toString(),
                             name: updateNameController.text,
                             email: updateGmailController.text);
                       } else {

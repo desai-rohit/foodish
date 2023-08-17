@@ -2,8 +2,8 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery/pages/cart/cart_page.dart';
 import 'package:food_delivery/pages/favorite/favorite_page.dart';
-import 'package:food_delivery/pages/home/home_page.dart';
 import 'package:food_delivery/pages/UserPages/profile_page.dart';
+import 'package:food_delivery/pages/home/home_page.dart';
 
 class BottomNav extends StatefulWidget {
   const BottomNav({
@@ -29,9 +29,13 @@ class _BottomNavState extends State<BottomNav> {
       body:
           //Expanded(child: pages.elementAt(index)),
 
-          IndexedStack(
-        index: index,
-        children: pages,
+          Container(
+        color: Colors.transparent,
+        padding: const EdgeInsets.only(bottom: 60),
+        child: IndexedStack(
+          index: index,
+          children: pages,
+        ),
       ),
       bottomNavigationBar: CurvedNavigationBar(
         height: 60,

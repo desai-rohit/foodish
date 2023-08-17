@@ -1,7 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:food_delivery/config/golbal.dart';
-import 'package:food_delivery/pages/otherPages/bottom_nav/bottom_nav.dart';
 import 'package:food_delivery/provider/user_provider.dart';
 import 'package:food_delivery/services/api_user.dart';
 import 'package:intl/intl.dart';
@@ -38,6 +36,7 @@ class _PaymentPageState extends State<PaymentPage> {
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+
     super.initState();
   }
 
@@ -59,23 +58,24 @@ class _PaymentPageState extends State<PaymentPage> {
     // Do something when payment succeeds
     for (var i = 0; i < pcartdata!.cartdata.length; i++) {
       await order(
-        productid: pcartdata!.cartdata[i].productsId,
-        name: pcartdata!.cartdata[i].name,
-        gmail: pcartdata!.cartdata[i].user,
-        image: pcartdata!.cartdata[i].image,
-        foodname: pcartdata!.cartdata[i].name,
-        restorantName: pcartdata!.cartdata[i].restorantName,
-        restorantGmail: pcartdata!.cartdata[i].restorantGmail,
-        price: pcartdata!.cartdata[i].price,
-        countTotalPrice: pcartdata!.alltotalAmount.toString(),
-        lat: widget.lat,
-        lng: widget.lng,
-        house: widget.house,
-        area: widget.area,
-        landmark: widget.landmark,
-      ).then((value) => deleteCart(pcartdata!.cartdata[i].productsId)).then(
-          (value) => Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const BottomNav())));
+              productid: pcartdata!.cartdata[i].productsId,
+              name: pcartdata!.cartdata[i].name,
+              gmail: pcartdata!.cartdata[i].user,
+              image: pcartdata!.cartdata[i].image,
+              foodname: pcartdata!.cartdata[i].name,
+              restorantName: pcartdata!.cartdata[i].restorantName,
+              restorantGmail: pcartdata!.cartdata[i].restorantGmail,
+              price: pcartdata!.cartdata[i].price,
+              countTotalPrice: pcartdata!.cartdata[i].totalprice,
+              lat: widget.lat,
+              lng: widget.lng,
+              house: widget.house,
+              area: widget.area,
+              landmark: widget.landmark,
+              orderid: pcartdata!.orderId,
+              paymentid: response.paymentId)
+          .then((value) => Provider.of<UserProvider>(context, listen: false)
+              .deletecart(pcartdata!.cartdata[i].productsId));
     }
   }
 
@@ -103,7 +103,7 @@ class _PaymentPageState extends State<PaymentPage> {
                   });
                 },
                 child: ListTile(
-                  title: const Text("Cash On Delivery"),
+                  title: const Text("Credit Card / Debit Card"),
                   leading: IconButton(
                       onPressed: () {},
                       icon: value.cashOnDSelivery == true
@@ -112,7 +112,7 @@ class _PaymentPageState extends State<PaymentPage> {
                               color: Colors.blue,
                             )
                           : const Icon(Icons.circle)),
-                  trailing: const Icon(Icons.home),
+                  trailing: const Icon(Icons.credit_card),
                 ),
               ),
               GestureDetector(
@@ -122,7 +122,7 @@ class _PaymentPageState extends State<PaymentPage> {
                   });
                 },
                 child: ListTile(
-                  title: const Text("UPI Card Payment"),
+                  title: const Text("UPI  Payment"),
                   leading: IconButton(
                       onPressed: () {},
                       icon: value.payment == true
@@ -131,7 +131,7 @@ class _PaymentPageState extends State<PaymentPage> {
                               color: Colors.blue,
                             )
                           : const Icon(Icons.circle)),
-                  trailing: const Icon(Icons.credit_card),
+                  trailing: const Icon(Icons.mobile_friendly),
                 ),
               ),
             ],
@@ -153,12 +153,13 @@ class _PaymentPageState extends State<PaymentPage> {
                           (double.parse(value.alltotalAmount.toString()) * 100),
                       //in the smallest currency sub-unit.
                       'name': "rohit",
+                      //'order_id': value.orderId,
 
                       'description': "",
                       'timeout': 300, // in seconds
                       'prefill': {
                         'contact': "91" "1456874515",
-                        'email': currentEmail,
+                        'email': value.currentEmail,
                       }
                     };
 

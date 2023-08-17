@@ -51,6 +51,7 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   lottie: ^2.5.0
   connectivity_plus: ^4.0.2
+  cached_network_image: ^3.2.3
   
 
 dev_dependencies:
