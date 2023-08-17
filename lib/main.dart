@@ -1,9 +1,8 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:food_delivery/config/golbal.dart';
 import 'package:food_delivery/config/my_theme.dart';
-import 'package:food_delivery/pages/otherPages/bottom_nav/bottom_nav.dart';
 import 'package:food_delivery/pages/UserPages/login_page.dart';
+import 'package:food_delivery/pages/otherPages/bottom_nav/bottom_nav.dart';
 import 'package:food_delivery/provider/user_provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -27,49 +26,8 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     getValidationdata();
-    networkcheck();
 
     super.initState();
-  }
-
-  Future networkcheck() async {
-    final connectivityResult = await (Connectivity().checkConnectivity());
-
-    if (connectivityResult == ConnectivityResult.mobile) {
-      // I am connected to a mobile network.
-    } else if (connectivityResult == ConnectivityResult.wifi) {
-      // I am connected to a wifi network.
-    } else if (connectivityResult == ConnectivityResult.ethernet) {
-      // I am connected to a ethernet network.
-    } else if (connectivityResult == ConnectivityResult.vpn) {
-      // I am connected to a vpn network.
-      // Note for iOS and macOS:
-      // There is no separate network interface type for [vpn].
-      // It returns [other] on any device (also simulator)
-    } else if (connectivityResult == ConnectivityResult.bluetooth) {
-      // I am connected to a bluetooth.
-    } else if (connectivityResult == ConnectivityResult.other) {
-      // I am connected to a network which is not in the above mentioned networks.
-    } else if (connectivityResult == ConnectivityResult.none) {
-      // I am not connected to any network.
-      Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: Lottie.asset(
-              'assets/animation/internet.json',
-              width: 200,
-              height: 200,
-              fit: BoxFit.fill,
-            ),
-          ),
-          const Text(
-            "Favorite List Empty",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          )
-        ],
-      );
-    }
   }
 
   Future getValidationdata() async {
@@ -78,19 +36,48 @@ class _MyAppState extends State<MyApp> {
     String email = sharedPreferences.getString("email").toString();
     // ignore: use_build_context_synchronously
     UserProvider provider = Provider.of<UserProvider>(context, listen: false);
-    provider.emailadd(email);
+    //await provider.emailadd(email);
+    await provider.emailadd(email);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserProvider>(builder: (context, value, child) {
-      return MaterialApp(
-        title: 'Flutter Demo',
-        theme: lightTheme,
-        darkTheme: darkTheme,
-        themeMode: ThemeMode.system,
-        home: currentEmail == null ? const LoginPage() : const BottomNav(),
-      );
-    });
+    return StreamBuilder<ConnectivityResult>(
+        stream: Connectivity().onConnectivityChanged,
+        builder: (context, snapshot) {
+          return Consumer<UserProvider>(builder: (context, value, child) {
+            return MaterialApp(
+              title: 'Flutter Demo',
+              theme: lightTheme,
+              darkTheme: darkTheme,
+              themeMode: ThemeMode.system,
+              home: snapshot.data == ConnectivityResult.none
+                  ? Scaffold(
+                      body: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Center(
+                            child: Lottie.asset(
+                              'assets/animation/no_internet.json',
+                              width: 250,
+                              height: 200,
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          const Text(
+                            textAlign: TextAlign.center,
+                            "Please Check Internet Connection",
+                            style: TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                    )
+                  : value.currentEmail == null
+                      ? const LoginPage()
+                      : const BottomNav(),
+            );
+          });
+        });
   }
 }
