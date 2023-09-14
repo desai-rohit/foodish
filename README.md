@@ -1,16 +1,6 @@
-# food_delivery
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# eMart Food Delivery App
+# App ScreenShot
+![screen_2](https://github.com/RDdev04/foodish/assets/76545854/2e224b45-3418-47ab-a49f-875853a338a8)
+![screen_1](https://github.com/RDdev04/foodish/assets/76545854/e7a835aa-0464-4994-bf2a-6e6a8823abd9)
+![screen_4](https://github.com/RDdev04/foodish/assets/76545854/aa0ed2df-c3c6-48e7-837d-5a9a8ed64914)
+![screen_3](https://github.com/RDdev04/foodish/assets/76545854/c3e02e82-be02-4ec3-b180-d0422b0e3550)
