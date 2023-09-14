@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery/provider/user_provider.dart';
+import 'package:food_delivery/pages/favorite/favorite_provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
@@ -15,15 +15,15 @@ class _FavoritePageState extends State<FavoritePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<UserProvider>(context, listen: false).getAllFavorite();
+      Provider.of<FavoriteProvider>(context, listen: false).getAllFavorite();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserProvider>(
+    return Consumer<FavoriteProvider>(
       builder: (context, value, child) {
-        return value.islaoding == true
+        return value.isloading == true
             ? const Center(
                 child: CircularProgressIndicator(
                   color: Colors.red,

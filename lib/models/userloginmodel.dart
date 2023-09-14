@@ -1,12 +1,11 @@
 import 'dart:convert';
 
-CurrentUserModel currentUserModelFromJson(String str) =>
-    CurrentUserModel.fromJson(json.decode(str));
+UserLoginModel userLoginModelFromJson(String str) =>
+    UserLoginModel.fromJson(json.decode(str));
 
-String currentUserModelToJson(CurrentUserModel data) =>
-    json.encode(data.toJson());
+String userLoginModelToJson(UserLoginModel data) => json.encode(data.toJson());
 
-class CurrentUserModel {
+class UserLoginModel {
   String? id;
   String? name;
   String? gmail;
@@ -14,7 +13,7 @@ class CurrentUserModel {
   List<Address>? address;
   int? v;
 
-  CurrentUserModel({
+  UserLoginModel({
     this.id,
     this.name,
     this.gmail,
@@ -23,8 +22,7 @@ class CurrentUserModel {
     this.v,
   });
 
-  factory CurrentUserModel.fromJson(Map<String, dynamic> json) =>
-      CurrentUserModel(
+  factory UserLoginModel.fromJson(Map<String, dynamic> json) => UserLoginModel(
         id: json["_id"],
         name: json["name"],
         gmail: json["gmail"],

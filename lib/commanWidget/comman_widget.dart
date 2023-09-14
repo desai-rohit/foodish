@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
-Widget button({
-  required context,
-  onPressd,
-  required name,
-  EdgeInsetsGeometry? padding,
-}) {
+Widget button(
+    {required context,
+    onPressd,
+    required name,
+    EdgeInsetsGeometry? padding,
+    required width}) {
   return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
-        color: Colors.red,
+        color: Colors.transparent,
       ),
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      width: MediaQuery.of(context).size.width,
+      width: width,
       padding: padding,
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(

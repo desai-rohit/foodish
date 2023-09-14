@@ -31,7 +31,6 @@ class _BottomNavState extends State<BottomNav> {
 
           Container(
         color: Colors.transparent,
-        padding: const EdgeInsets.only(bottom: 60),
         child: IndexedStack(
           index: index,
           children: pages,

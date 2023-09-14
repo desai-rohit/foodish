@@ -1,32 +1,57 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:food_delivery/commanWidget/comman_widget.dart';
 import 'package:food_delivery/pages/UserPages/login_page.dart';
-import 'package:food_delivery/provider/user_provider.dart';
+import 'package:food_delivery/pages/UserPages/login_provider.dart';
 import 'package:food_delivery/services/api_user.dart';
 import 'package:provider/provider.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
   @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  @override
   Widget build(BuildContext context) {
+    double screenheight = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: AppBar(),
-      body: Consumer<UserProvider>(builder: (context, provider, child) {
-        return SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "Sign Up",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
+      resizeToAvoidBottomInset: false,
+      body: Consumer<LoginProvider>(builder: (context, provider, child) {
+        return Stack(
+          children: [
+            Image.asset(
+              "assets/images/login.png",
+              height: MediaQuery.of(context).size.height / 1.5,
+              width: double.infinity,
+              fit: BoxFit.fill,
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Image.asset(
+                "assets/images/login2.png",
+                height: MediaQuery.of(context).size.height / 6,
+                width: double.infinity,
+                fit: BoxFit.fill,
+              ),
+            ),
+            Container(
+              alignment: Alignment.topCenter,
+              margin: EdgeInsets.only(top: screenheight / 4.5),
+              padding: const EdgeInsets.only(left: 24),
+              child: const Text(
+                "Resistor",
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 1, 99, 245)),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: screenheight / 2.5),
+              padding: const EdgeInsets.all(16),
+              child: Column(children: [
                 TextFormField(
                   controller: provider.namecontroller,
                   decoration: InputDecoration(
@@ -44,7 +69,7 @@ class RegisterPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(
-                  height: 16,
+                  height: 32,
                 ),
                 TextFormField(
                   controller: provider.gmailcontroller,
@@ -63,7 +88,7 @@ class RegisterPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(
-                  height: 16,
+                  height: 32,
                 ),
                 TextFormField(
                   controller: provider.passworController,
@@ -81,69 +106,58 @@ class RegisterPage extends StatelessWidget {
                     label: const Text("Password"),
                   ),
                 ),
-                const SizedBox(
-                  height: 24,
-                ),
-                button(
-                    context: context,
-                    name: "Create Accout",
-                    onPressd: () {
-                      for (var i = 0; i < provider.data.length; i++) {
-                        if (provider.data[i].gmail ==
-                            provider.gmailcontroller.text) {
-                          FocusManager.instance.primaryFocus?.unfocus();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text("This Email Alredy Resistor")));
-                        } else {
-                          FocusManager.instance.primaryFocus?.unfocus();
-
-                          createUser(
-                            name: provider.namecontroller.text.toString(),
-                            gmail: provider.gmailcontroller.text.toString(),
-                            password:
-                                provider.passworController.text.toString(),
-                          ).then((value) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text("Account Created")));
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const LoginPage(),
-                                ));
-
-                            provider.namecontroller.text = "";
-                            provider.gmailcontroller.text = "";
-                            provider.passworController.text = "";
-                          });
-                          break;
-                        }
-                      }
-                    }),
-                const SizedBox(
-                  height: 16,
-                ),
-                RichText(
-                    text: TextSpan(
-                        text: "Alredy Have An Account ",
-                        style: const TextStyle(color: Colors.black),
-                        children: [
-                      TextSpan(
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const LoginPage())),
-                          text: 'Login',
-                          style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.blue))
-                    ]))
-              ],
+              ]),
             ),
-          ),
+            Container(
+              margin: const EdgeInsets.only(left: 8, bottom: 10),
+              alignment: Alignment.bottomLeft,
+              child: RichText(
+                  text: TextSpan(
+                      text: "Alredy Account? ",
+                      style: const TextStyle(),
+                      children: [
+                    TextSpan(
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const LoginPage())),
+                        text: 'Login',
+                        style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white))
+                  ])),
+            ),
+            Container(
+                padding: const EdgeInsets.only(right: 8),
+                margin: const EdgeInsets.only(bottom: 10),
+                alignment: Alignment.bottomRight,
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width / 2,
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        elevation: 0,
+                        foregroundColor: Colors.white,
+                        side: const BorderSide(color: Colors.white),
+                        backgroundColor: Colors.transparent,
+                      ),
+                      onPressed: () {
+                        usersignup(
+                                name: provider.namecontroller.text,
+                                gmail: provider.gmailcontroller.text,
+                                password: provider.passworController.text,
+                                context: context)
+                            .then((value) {
+                          provider.namecontroller.clear();
+                          provider.gmailcontroller.clear();
+                          provider.passworController.clear();
+                        });
+                      },
+                      child: const Text("Register")),
+                ))
+          ],
         );
       }),
     );

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery/pages/otherPages/bottom_nav/bottom_nav.dart';
-import 'package:food_delivery/provider/user_provider.dart';
+import 'package:food_delivery/const/api_const.dart';
+import 'package:food_delivery/pages/home/address_provider.dart';
+import 'package:food_delivery/pages/bottom_nav/bottom_nav.dart';
+
 import 'package:food_delivery/services/api_user.dart';
 import 'package:food_delivery/commanWidget/comman_widget.dart';
 import 'package:geolocator/geolocator.dart';
@@ -18,39 +20,28 @@ class AddressLocation extends StatefulWidget {
 class _AddressLocationState extends State<AddressLocation> {
   GoogleMapController? googleMapController;
   final Map<String, Marker> _marker = {};
-  // double lat = 22.634192;
-  // double lng = 79.610161;
-
-  void _onMapCreated(GoogleMapController controller) {
-    googleMapController = controller;
-  }
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      UserProvider provider = Provider.of<UserProvider>(context, listen: false);
+      AddressProvider provider =
+          Provider.of<AddressProvider>(context, listen: false);
 
       provider.getRestaurants();
+      checkPermission(Permission.location, context);
     });
-
-    checkPermission(Permission.location, context);
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // setState(() {
-    //   lat;
-    //   lng;
-    // });
-
-    return Consumer<UserProvider>(builder: (context, value, child) {
+    return Consumer<AddressProvider>(builder: (context, value, child) {
       return Stack(children: [
         Opacity(
-          opacity: value.islaoding == true ? 0.5 : 1,
+          opacity: value.isloading == true ? 0.5 : 1,
           child: AbsorbPointer(
-            absorbing: value.islaoding,
+            absorbing: value.isloading,
             child: Scaffold(
               appBar: AppBar(
                 actions: [
@@ -61,43 +52,47 @@ class _AddressLocationState extends State<AddressLocation> {
                       icon: const Icon(Icons.location_city))
                 ],
               ),
-              body: Consumer<UserProvider>(
+              body: Consumer<AddressProvider>(
                 builder: (context, provider, child) {
                   return Column(
                     children: [
                       Expanded(
-                        child: GoogleMap(
-                          onTap: (LatLng latlng) {
-                            // setState(() {
-                            // lat = latlng.latitude;
-                            // lng = latlng.longitude;
-                            // print(lat);
-                            // print(lng);
-                            provider.latlag(latlng.latitude, latlng.longitude);
+                        child: provider.lat == 0
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.red,
+                                ),
+                              )
+                            : GoogleMap(
+                                onTap: (LatLng latlng) {
+                                  provider.latlag(
+                                      latlng.latitude, latlng.longitude);
 
-                            addmarker(
-                                "test1", LatLng(provider.lat, provider.lng));
-                            // });
-                          },
-                          onMapCreated: (controller) {
-                            googleMapController = controller;
-                          },
-                          markers: _marker.values.toSet(),
-                          initialCameraPosition: CameraPosition(
-                              target: LatLng(provider.lat, provider.lng),
-                              zoom: 4),
-                        ),
+                                  addmarker("test1",
+                                      LatLng(provider.lat!, provider.lng!));
+                                  // });
+                                },
+                                onMapCreated: (controller) {
+                                  googleMapController = controller;
+                                },
+                                markers: _marker.values.toSet(),
+                                initialCameraPosition: CameraPosition(
+                                    target:
+                                        LatLng(provider.lat!, provider.lng!),
+                                    zoom: 15),
+                              ),
                       ),
                       Text(provider.street),
                       button(
+                          width: MediaQuery.of(context).size.width,
                           context: context,
                           onPressd: () async {
                             for (int i = 0;
                                 i < provider.restaurantListData.length;
                                 i++) {
                               if (Geolocator.distanceBetween(
-                                      provider.lat,
-                                      provider.lng,
+                                      provider.lat!,
+                                      provider.lng!,
                                       double.parse(provider
                                           .restaurantListData[i]
                                           .address[0]
@@ -193,8 +188,8 @@ class _AddressLocationState extends State<AddressLocation> {
                                                             Colors.red),
                                                     onPressed: () {
                                                       updateUser(
-                                                              gmail: provider
-                                                                  .currentEmail!,
+                                                              gmail: currentEmail
+                                                                  .toString(),
                                                               lat: provider.lat
                                                                   .toString(),
                                                               lng: provider.lng
@@ -244,7 +239,7 @@ class _AddressLocationState extends State<AddressLocation> {
           child: Align(
             alignment: Alignment.center,
             child: Opacity(
-              opacity: value.islaoding ? 1.0 : 0,
+              opacity: value.isloading ? 1.0 : 0,
               child: const CircularProgressIndicator(
                 color: Colors.red,
               ),
@@ -264,7 +259,8 @@ class _AddressLocationState extends State<AddressLocation> {
 
   Future<void> checkPermission(
       Permission permission, BuildContext context) async {
-    UserProvider provider = Provider.of<UserProvider>(context, listen: false);
+    AddressProvider provider =
+        Provider.of<AddressProvider>(context, listen: false);
     final status = await permission.request();
     if (status.isGranted) {
       await Geolocator.isLocationServiceEnabled()
@@ -274,10 +270,10 @@ class _AddressLocationState extends State<AddressLocation> {
           desiredAccuracy: LocationAccuracy.high);
       provider.lat = position.latitude;
       provider.lng = position.longitude;
-      addmarker("test1", LatLng(provider.lat, provider.lng));
+      addmarker("test1", LatLng(provider.lat!, provider.lng!));
 
       // ignore: use_build_context_synchronously
-      Provider.of<UserProvider>(context, listen: false)
+      Provider.of<AddressProvider>(context, listen: false)
           .latlag(position.latitude, position.longitude);
 
       CameraPosition(
@@ -286,10 +282,37 @@ class _AddressLocationState extends State<AddressLocation> {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Permission is Granted")));
-    } else {
+    } else if (status.isDenied) {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Permission is Denied")));
+      await Permission.location.request();
+    } else if (status.isPermanentlyDenied) {
+      // ignore: use_build_context_synchronously
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Location Enable'),
+          content: const Text(
+              'Kindly allow Permission from App Setting, without this permission app would not show maps'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pushAndRemoveUntil<void>(
+                context,
+                MaterialPageRoute<void>(
+                    builder: (BuildContext context) => const BottomNav()),
+                ModalRoute.withName('/'),
+              ),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () =>
+                  openAppSettings().then((value) => const AddressLocation()),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
   }
 }

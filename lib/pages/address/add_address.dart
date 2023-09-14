@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery/const/api_const.dart';
+import 'package:food_delivery/pages/home/address_provider.dart';
+import 'package:food_delivery/pages/home/home_provider.dart';
 import 'package:food_delivery/pages/payment/payment_page.dart';
-import 'package:food_delivery/provider/user_provider.dart';
 import 'package:food_delivery/services/api_user.dart';
 import 'package:food_delivery/commanWidget/comman_widget.dart';
 import 'package:geolocator/geolocator.dart';
@@ -19,10 +21,6 @@ class _AddAddressState extends State<AddAddress> {
   GoogleMapController? googleMapController;
   final Map<String, Marker> _marker = {};
 
-  void _onMapCreated(GoogleMapController controller) {
-    googleMapController = controller;
-  }
-
   double lat = 22.634192;
   double lng = 79.610161;
 
@@ -30,7 +28,7 @@ class _AddAddressState extends State<AddAddress> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<UserProvider>(context, listen: false).getUser();
+      Provider.of<HomeProvider>(context, listen: false).getUser();
     });
 
     checkPermission(Permission.location, context);
@@ -40,7 +38,7 @@ class _AddAddressState extends State<AddAddress> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Consumer<UserProvider>(
+      body: Consumer<AddressProvider>(
         builder: (context, provider, child) {
           return Column(
             children: [
@@ -58,11 +56,12 @@ class _AddAddressState extends State<AddAddress> {
                     googleMapController = controller;
                   },
                   markers: _marker.values.toSet(),
-                  initialCameraPosition:
-                      CameraPosition(target: LatLng(lat, lng), zoom: 15),
+                  initialCameraPosition: CameraPosition(
+                      target: LatLng(lat, lng), tilt: 59, zoom: 1),
                 ),
               ),
               button(
+                  width: MediaQuery.of(context).size.width,
                   context: context,
                   onPressd: () {
                     showModalBottomSheet(
@@ -126,7 +125,7 @@ class _AddAddressState extends State<AddAddress> {
                                             backgroundColor: Colors.red),
                                         onPressed: () {
                                           updateUser(
-                                                  gmail: provider.currentEmail!,
+                                                  gmail: currentEmail!,
                                                   lat: lat.toString(),
                                                   lng: lng.toString(),
                                                   flat: provider.addflat.text,
@@ -189,7 +188,7 @@ class _AddAddressState extends State<AddAddress> {
       addmarker("test1", LatLng(lat, lng));
 
       // ignore: use_build_context_synchronously
-      Provider.of<UserProvider>(context, listen: false)
+      Provider.of<AddressProvider>(context, listen: false)
           .latlag(position.latitude, position.longitude);
 
       CameraPosition(

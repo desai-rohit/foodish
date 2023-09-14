@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery/config/category_image.dart';
-import 'package:food_delivery/config/my_colors.dart';
+import 'package:food_delivery/const/category_image.dart';
+import 'package:food_delivery/mytheme/my_colors.dart';
 import 'package:food_delivery/pages/home/address.dart';
+import 'package:food_delivery/pages/home/home_provider.dart';
 import 'package:food_delivery/pages/orderpage/order_page.dart';
-import 'package:food_delivery/pages/otherPages/search/search_page.dart';
-import 'package:food_delivery/provider/user_provider.dart';
+import 'package:food_delivery/pages/search/search_page.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,12 +15,11 @@ class HomePage extends StatefulWidget {
 }
 
 late PageController _pageController;
-int activePage = 1;
 
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
-    UserProvider value = Provider.of<UserProvider>(context, listen: false);
+    HomeProvider value = Provider.of<HomeProvider>(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       await value.homePageProductsLoad();
@@ -34,12 +33,12 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     _pageController = PageController(viewportFraction: 0.8);
-    return Consumer<UserProvider>(builder: (context, value, child) {
+    return Consumer<HomeProvider>(builder: (context, value, child) {
       return Stack(children: [
         Opacity(
-          opacity: value.islaoding == true ? 0.5 : 1,
+          opacity: value.isloading == true ? 0.5 : 1,
           child: AbsorbPointer(
-            absorbing: value.islaoding,
+            absorbing: value.isloading,
             child: Scaffold(
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               appBar: AppBar(
@@ -77,47 +76,72 @@ class _HomePageState extends State<HomePage> {
                                 controller: _pageController,
                                 pageSnapping: true,
                                 onPageChanged: (page) {
-                                  setState(() {
-                                    activePage = page;
-                                  });
+                                  value.slideactivepage(page);
                                 },
                                 itemBuilder: (contex, index) {
-                                  bool active = index == activePage;
+                                  bool active = index == value.activePage;
                                   double margin = active ? 4 : 8;
-                                  return
-
-                                      // CachedNetworkImage(
-                                      //   imageUrl: value.slideImageData[index].imges,
-                                      //   placeholder: (context, url) =>
-                                      //       const CircularProgressIndicator(
-                                      //     color: Colors.red,
-                                      //   ),
-                                      //   imageBuilder: (context, imageProvider) {
-                                      //     return AnimatedContainer(
-                                      //       width: 250,
-                                      //       height: 200,
-                                      //       duration:
-                                      //           const Duration(milliseconds: 500),
-                                      //       curve: Curves.easeInOutCubic,
-                                      //       margin: EdgeInsets.all(margin),
-                                      //       decoration: BoxDecoration(
-                                      //           image: DecorationImage(
-                                      //               image: imageProvider,
-                                      //               fit: BoxFit.fill)),
-                                      //     );
-                                      //   },
-                                      // );
-
-                                      AnimatedContainer(
+                                  return AnimatedContainer(
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(24)),
                                     duration: const Duration(milliseconds: 500),
                                     curve: Curves.easeInOutCubic,
                                     margin: EdgeInsets.all(margin),
-                                    child: Image.network(
-                                      value.slideImageData[index].imges,
-                                      fit: BoxFit.fill,
-                                      cacheWidth: 300,
-                                      cacheHeight: 250,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(24),
+                                      child: Image.network(
+                                        loadingBuilder: (BuildContext context,
+                                            Widget child,
+                                            ImageChunkEvent? loadingProgress) {
+                                          if (loadingProgress == null) {
+                                            return child;
+                                          }
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                              value: loadingProgress
+                                                          .expectedTotalBytes !=
+                                                      null
+                                                  ? loadingProgress
+                                                          .cumulativeBytesLoaded /
+                                                      loadingProgress
+                                                          .expectedTotalBytes!
+                                                  : null,
+                                            ),
+                                          );
+                                        },
+                                        errorBuilder: (BuildContext context,
+                                            Object exception,
+                                            StackTrace? stackTrace) {
+                                          return const Text('😢');
+                                        },
+                                        value.slideImageData[index].imges,
+                                        fit: BoxFit.fill,
+                                        cacheWidth: 300,
+                                        cacheHeight: 250,
+                                      ),
                                     ),
+                                  );
+                                }),
+                          ),
+                          SizedBox(
+                            height: 30,
+                            child: ListView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: value.slideImageData.length,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    margin: const EdgeInsets.all(10),
+                                    width: 10,
+                                    height: 10,
+                                    decoration: BoxDecoration(
+                                        color: index == value.activePage
+                                            ? Colors.black
+                                            : Colors.grey,
+                                        borderRadius:
+                                            BorderRadius.circular(16)),
                                   );
                                 }),
                           ),
@@ -125,35 +149,6 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(
                             height: 24,
                           ),
-
-                          // SliverList(
-                          //   delegate: SliverChildBuilderDelegate(
-                          //     (BuildContext context, int index) {
-                          //       return Container(
-                          //         child: Text("$index"),
-                          //       );
-                          //     },
-                          //     childCount: value.slideImageData.length,
-                          //   ),
-                          // ),
-
-                          // ListView.builder(
-                          //     itemCount: value.slideImageData.length,
-                          //     itemBuilder: (context, index) {
-                          //       return Row(
-                          //         children: [
-                          //           Container(
-                          //             width: 10,
-                          //             height: 10,
-                          //             decoration: const BoxDecoration(
-                          //                 // color: activePage == index
-                          //                 //     ? Colors.black
-                          //                 //     : Colors.grey
-                          //                 color: Colors.black),
-                          //           )
-                          //         ],
-                          //       );
-                          //     }),
 
                           //search Box
                           TextField(
@@ -167,7 +162,6 @@ class _HomePageState extends State<HomePage> {
                                           SearchPage(query: value)));
                             },
                             autofocus: false,
-                            style: const TextStyle(color: Color(0xFFbdc6cf)),
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.search),
                               filled: true,
@@ -198,7 +192,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           // food category
                           SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.2,
+                            height: MediaQuery.of(context).size.height * 0.25,
                             width: double.infinity,
                             child: ListView.builder(
                                 physics: const BouncingScrollPhysics(),
@@ -219,13 +213,21 @@ class _HomePageState extends State<HomePage> {
                                         borderRadius: const BorderRadius.all(
                                             Radius.circular(16)),
                                         onTap: () async {
-                                          categoryName[index] == "All Food"
-                                              ? value.getProducts(
-                                                  gmail: value.restauramtGmail!)
-                                              : value.getcategoryProducts(
-                                                  gmail: value.restauramtGmail!,
-                                                  category:
-                                                      categoryName[index++]);
+                                          if (value.user!.address![0].area !=
+                                              "") {
+                                            categoryName[index] == "All Food"
+                                                ? value.getProducts(
+                                                    gmail:
+                                                        value.restauramtGmail!)
+                                                : value.getcategoryProducts(
+                                                    gmail:
+                                                        value.restauramtGmail!,
+                                                    category:
+                                                        categoryName[index++],
+                                                  );
+                                          } else {
+                                            value.fontsizea();
+                                          }
                                         },
                                         child: Container(
                                           margin: const EdgeInsets.all(4),
@@ -261,31 +263,44 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
-                    SliverGrid(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 10.0,
-                        crossAxisSpacing: 10.0,
-                        childAspectRatio: 6 / 11,
-                      ),
-                      delegate: SliverChildBuilderDelegate(
-                        (BuildContext context, int index) {
-                          return value.distanceInKm == 0.0
-                              ? const Center(
-                                  child: Text("Please select location"),
-                                )
-                              // ignore: prefer_is_empty
-                              : value.productsListData.isEmpty
-                                  ? const Center(
-                                      child: Text("This Category No Food"))
-                                  : Material(
+                    value.distanceInKm == 0.0
+                        ? SliverToBoxAdapter(
+                            child: Center(
+                              child: Text(
+                                "Please Select Location",
+                                style: TextStyle(
+                                    fontSize: value.fontsize,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          )
+                        : value.productsListData.isEmpty
+                            ? const SliverToBoxAdapter(
+                                child: Center(
+                                  child: Text("This Category No Food",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                              )
+                            : SliverGrid(
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: 10.0,
+                                  crossAxisSpacing: 10.0,
+                                  childAspectRatio: 6 / 11,
+                                ),
+                                delegate: SliverChildBuilderDelegate(
+                                  (BuildContext context, int index) {
+                                    return Material(
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(16)),
                                       color: Theme.of(context)
                                           .colorScheme
                                           .primaryContainer,
                                       child: InkWell(
+                                          splashColor: Colors.grey,
                                           borderRadius: const BorderRadius.all(
                                               Radius.circular(16)),
                                           onTap: () {
@@ -352,10 +367,11 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                           )),
                                     );
-                        },
-                        childCount: value.productsListData.length,
-                      ),
-                    ),
+                                  },
+                                  childCount: value.productsListData.length,
+                                ),
+                              ),
+                    const SliverPadding(padding: EdgeInsets.only(bottom: 60))
                   ],
                 ),
               ),
@@ -366,7 +382,7 @@ class _HomePageState extends State<HomePage> {
           child: Align(
             alignment: Alignment.center,
             child: Opacity(
-              opacity: value.islaoding ? 1.0 : 0,
+              opacity: value.isloading ? 1.0 : 0,
               child: const CircularProgressIndicator(
                 color: Colors.red,
               ),

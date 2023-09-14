@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/commanWidget/comman_widget.dart';
+import 'package:food_delivery/const/api_const.dart';
 import 'package:food_delivery/provider/user_provider.dart';
 import 'package:food_delivery/services/api_user.dart';
 import 'package:provider/provider.dart';
@@ -37,17 +38,9 @@ class _UpdateProfileState extends State<UpdateProfile> {
             child: Column(
               children: [
                 TextFormField(
-                  cursorColor: Theme.of(context).colorScheme.onPrimary,
                   controller: updateNameController,
-                  decoration: InputDecoration(
-                    labelStyle: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.onPrimary),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(32))),
-                    border: const OutlineInputBorder(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(32))),
                   ),
                 ),
@@ -55,17 +48,9 @@ class _UpdateProfileState extends State<UpdateProfile> {
                   height: 16,
                 ),
                 TextFormField(
-                  cursorColor: Theme.of(context).colorScheme.onPrimary,
                   controller: updateGmailController,
-                  decoration: InputDecoration(
-                    labelStyle: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.onPrimary),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(32))),
-                    border: const OutlineInputBorder(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(32))),
                   ),
                 ),
@@ -73,31 +58,24 @@ class _UpdateProfileState extends State<UpdateProfile> {
                   height: 16,
                 ),
                 TextFormField(
-                  cursorColor: Theme.of(context).colorScheme.onPrimary,
                   controller: updatePasswordController,
-                  decoration: InputDecoration(
-                      labelStyle: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.onPrimary),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(32))),
-                      border: const OutlineInputBorder(
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(32))),
-                      label: const Text("Enter Password")),
+                      label: Text("Enter Password")),
                 ),
                 const SizedBox(
                   height: 24,
                 ),
                 button(
+                    width: MediaQuery.of(context).size.width,
                     context: context,
                     name: "Update",
                     onPressd: () {
                       if (widget.data.password ==
                           updatePasswordController.text) {
                         updateUserName(
-                            gmail: value.currentEmail.toString(),
+                            gmail: currentEmail.toString(),
                             name: updateNameController.text,
                             email: updateGmailController.text);
                       } else {

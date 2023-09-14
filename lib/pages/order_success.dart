@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:food_delivery/commanWidget/comman_widget.dart';
-import 'package:food_delivery/pages/otherPages/bottom_nav/bottom_nav.dart';
+import 'package:food_delivery/pages/bottom_nav/bottom_nav.dart';
 import 'package:food_delivery/provider/user_provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -20,10 +20,8 @@ class _OrderSuccessState extends State<OrderSuccess>
 
   @override
   void initState() {
-    
     Timer(const Duration(seconds: 3), () async {
       await Provider.of<UserProvider>(context, listen: false).isloading(true);
-      
     });
     super.initState();
   }
@@ -60,6 +58,7 @@ class _OrderSuccessState extends State<OrderSuccess>
                     )),
                     // duration: const Duration(seconds: 5),
                     child: button(
+                        width: MediaQuery.of(context).size.width,
                         context: context,
                         name: "Continue",
                         onPressd: () {

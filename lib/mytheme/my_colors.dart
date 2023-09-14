@@ -16,4 +16,4 @@ const darkWidgetColor = Color.fromARGB(255, 134, 134, 134);
 //comman colors
 const redcolors = Colors.red;
 const whitecolors = Colors.white;
-const blackcolor = Colors.white;
+const blackcolor = Colors.black;

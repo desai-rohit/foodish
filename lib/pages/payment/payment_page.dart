@@ -1,6 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:food_delivery/provider/user_provider.dart';
+import 'package:food_delivery/const/api_const.dart';
+import 'package:food_delivery/pages/UserPages/login_provider.dart';
+import 'package:food_delivery/pages/cart/cart_provider.dart';
+import 'package:food_delivery/pages/payment/payment_provider.dart';
 import 'package:food_delivery/services/api_user.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -29,13 +32,16 @@ class _PaymentPageState extends State<PaymentPage> {
   final _razorpay = Razorpay();
   var rndnumber = "";
   String formattedDate = "";
-  UserProvider? pcartdata;
-  // List<Addcart>? carddata;
+
   @override
   void initState() {
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<CartProvider>(context, listen: false).getAllCart();
+      Provider.of<LoginProvider>(context, listen: false).getUser();
+      _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+      _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+      _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    });
 
     super.initState();
   }
@@ -56,26 +62,28 @@ class _PaymentPageState extends State<PaymentPage> {
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     // Do something when payment succeeds
-    for (var i = 0; i < pcartdata!.cartdata.length; i++) {
+    CartProvider cartProvider =
+        Provider.of<CartProvider>(context, listen: false);
+    for (var i = 0; i < cartProvider.cartdata.length; i++) {
       await order(
-              productid: pcartdata!.cartdata[i].productsId,
-              name: pcartdata!.cartdata[i].name,
-              gmail: pcartdata!.cartdata[i].user,
-              image: pcartdata!.cartdata[i].image,
-              foodname: pcartdata!.cartdata[i].name,
-              restorantName: pcartdata!.cartdata[i].restorantName,
-              restorantGmail: pcartdata!.cartdata[i].restorantGmail,
-              price: pcartdata!.cartdata[i].price,
-              countTotalPrice: pcartdata!.cartdata[i].totalprice,
+              productid: cartProvider.cartdata[i].productsId,
+              name: cartProvider.cartdata[i].name,
+              gmail: cartProvider.cartdata[i].user,
+              image: cartProvider.cartdata[i].image,
+              foodname: cartProvider.cartdata[i].name,
+              restorantName: cartProvider.cartdata[i].restorantName,
+              restorantGmail: cartProvider.cartdata[i].restorantGmail,
+              price: cartProvider.cartdata[i].price,
+              countTotalPrice: cartProvider.cartdata[i].totalprice,
               lat: widget.lat,
               lng: widget.lng,
               house: widget.house,
               area: widget.area,
               landmark: widget.landmark,
-              orderid: pcartdata!.orderId,
+              orderid: cartProvider.orderId,
               paymentid: response.paymentId)
-          .then((value) => Provider.of<UserProvider>(context, listen: false)
-              .deletecart(pcartdata!.cartdata[i].productsId));
+          .then((value) => Provider.of<CartProvider>(context, listen: false)
+              .deletecart(cartProvider.cartdata[i].productsId));
     }
   }
 
@@ -89,9 +97,12 @@ class _PaymentPageState extends State<PaymentPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserProvider>(
+    CartProvider cartProvider = Provider.of<CartProvider>(context);
+    LoginProvider loginProvider =
+        Provider.of<LoginProvider>(context, listen: false);
+    return Consumer<PaymentProvider>(
       builder: (context, value, child) {
-        pcartdata = value;
+        //  pcartdata = value;
         return Scaffold(
           appBar: AppBar(),
           body: Column(
@@ -144,30 +155,27 @@ class _PaymentPageState extends State<PaymentPage> {
                   style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                          borderRadius: BorderRadius.circular(32)),
                       backgroundColor: Colors.red),
                   onPressed: () {
                     var options = {
                       'key': 'rzp_test_HCp0lrzi56DnFI',
-                      'amount':
-                          (double.parse(value.alltotalAmount.toString()) * 100),
+                      'amount': (double.parse(
+                              cartProvider.alltotalAmount.toString()) *
+                          100),
                       //in the smallest currency sub-unit.
-                      'name': "rohit",
+                      'name': loginProvider.currentUserModel!.name,
                       //'order_id': value.orderId,
 
                       'description': "",
                       'timeout': 300, // in seconds
                       'prefill': {
                         'contact': "91" "1456874515",
-                        'email': value.currentEmail,
+                        'email': currentEmail,
                       }
                     };
 
                     _razorpay.open(options);
-
-                    setState(() {
-                      pcartdata = value;
-                    });
                   },
                   child: Text(
                     value.payment == true ? "Payment" : "Cash On Delivery",

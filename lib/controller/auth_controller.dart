@@ -1,3 +1,0 @@
-class AuthController {
-  static login() {}
-}

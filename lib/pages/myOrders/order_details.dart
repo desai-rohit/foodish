@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:food_delivery/commanWidget/comman_widget.dart';
-import 'package:food_delivery/provider/user_provider.dart';
+import 'package:food_delivery/pages/myOrders/myorder_provider.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
@@ -19,13 +19,13 @@ class _OrderDetailsState extends State<OrderDetails> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<UserProvider>(context, listen: false).getOrderList();
+      Provider.of<MyOrderProvider>(context, listen: false).getOrderList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserProvider>(
+    return Consumer<MyOrderProvider>(
       builder: (context, value, child) {
         return Scaffold(
           appBar: AppBar(),
@@ -96,6 +96,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                   height: 24,
                 ),
                 button(
+                  width: MediaQuery.of(context).size.width,
                   context: context,
                   onPressd: () {
                     value.updateRateing(widget.data.id, value.prodcutsRateing);

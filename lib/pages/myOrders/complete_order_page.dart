@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery/pages/myOrders/myorder_provider.dart';
 import 'package:food_delivery/pages/myOrders/order_details.dart';
-import 'package:food_delivery/provider/user_provider.dart';
 import 'package:provider/provider.dart';
 
 class CompleteOrderPage extends StatefulWidget {
@@ -18,13 +18,13 @@ class _CompleteOrderPageState extends State<CompleteOrderPage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<UserProvider>(context, listen: false).getOrderList();
+      Provider.of<MyOrderProvider>(context, listen: false).getOrderList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserProvider>(
+    return Consumer<MyOrderProvider>(
       builder: (context, value, child) {
         return DefaultTabController(
           length: 3,
@@ -34,9 +34,9 @@ class _CompleteOrderPageState extends State<CompleteOrderPage> {
                     indicatorColor: Colors.red,
                     labelColor: Colors.red,
                     tabs: [
-                      Text("New Order"),
-                      Text("Ship Order"),
-                      Text("complete Order"),
+                      Text(textAlign: TextAlign.center, "New Order"),
+                      Text(textAlign: TextAlign.center, "Ship Order"),
+                      Text(textAlign: TextAlign.center, "complete Order"),
                     ]),
               ),
               body: TabBarView(children: [
