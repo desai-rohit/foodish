@@ -1,4 +1,4 @@
-# eMart Food Delivery App
+# Foodish Food Delivery App
 <p align="left">
 </p>
 
