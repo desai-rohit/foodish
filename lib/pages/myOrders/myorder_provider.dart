@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/const/api_const.dart';
 import 'package:food_delivery/models/order_model.dart';
-import 'package:food_delivery/services/api_user.dart';
+import 'package:food_delivery/pages/myOrders/myorder_services.dart';
 
 class MyOrderProvider extends ChangeNotifier {
   bool isloading = false;
 
-  final _apiServices = ApiServices();
+  final myorderServices = MyOrderServices();
   List<OrderModel> _orderLst = [];
   List<OrderModel> get orderListData => _orderLst;
 
@@ -15,7 +15,7 @@ class MyOrderProvider extends ChangeNotifier {
   Future<void> getOrderList() async {
     isloading = true;
     notifyListeners();
-    final response = await _apiServices.getCompleteOrder(currentEmail);
+    final response = await myorderServices.getCompleteOrder(currentEmail);
     _orderLst = response;
     isloading = false;
 
@@ -28,7 +28,7 @@ class MyOrderProvider extends ChangeNotifier {
   }
 
   updateRateing(id, prateing) {
-    rateing(id: id, rateing: prateing).then((value) => getOrderList());
+   myorderServices.rateing(id: id, rateing: prateing).then((value) => getOrderList());
     notifyListeners();
   }
 }

@@ -4,21 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery/const/api_const.dart';
 import 'package:food_delivery/models/current_user_model.dart';
 import 'package:food_delivery/models/products_model.dart';
-import 'package:food_delivery/models/restaurantList_model.dart';
-import 'package:food_delivery/models/slideModel.dart';
-import 'package:food_delivery/services/api_user.dart';
+import 'package:food_delivery/models/restaurantlist_model.dart';
+import 'package:food_delivery/models/slide_model.dart';
+import 'package:food_delivery/pages/home/home_services.dart';
 import 'package:geolocator/geolocator.dart';
 
 class HomeProvider extends ChangeNotifier {
   bool isloading = false;
 
-  final _userServices = UserServices();
+  final homeservices = Homeservices();
   CurrentUserModel? user;
 
   List<RestaurantListModel> _restaurantList = [];
   List<RestaurantListModel> get restaurantListData => _restaurantList;
 
-  final _apiServices = ApiServices();
 
   String? restauramtGmail;
 
@@ -59,19 +58,14 @@ class HomeProvider extends ChangeNotifier {
   }
 
   Future<void> getUser() async {
-    isloading = true;
-    notifyListeners();
-    final response = await _userServices.getUserData(currentEmail);
+    final response = await homeservices.getUserData(currentEmail);
     user = response;
-
-    isloading = false;
-    notifyListeners();
   }
 
   Future<void> getRestaurants() async {
     isloading = true;
     notifyListeners();
-    final response = await _apiServices.getrestaurantResult();
+    final response = await homeservices.getrestaurantResult();
     _restaurantList = response;
     isloading = false;
     notifyListeners();
@@ -80,7 +74,7 @@ class HomeProvider extends ChangeNotifier {
   Future<void> getProducts({required String gmail}) async {
     isloading = true;
     notifyListeners();
-    final response = await _apiServices.getProductsList(gmail: gmail);
+    final response = await homeservices.getProductsList(gmail: gmail);
     productsList = response;
     isloading = false;
     productsListData;
@@ -96,7 +90,7 @@ class HomeProvider extends ChangeNotifier {
   Future<void> getsldieimage() async {
     // islaoding = true;
     notifyListeners();
-    final response = await _apiServices.sildeImage();
+    final response = await homeservices.sildeImage();
     _sildelist = response;
     // islaoding = false;
     notifyListeners();
@@ -106,7 +100,7 @@ class HomeProvider extends ChangeNotifier {
       {required String gmail, String? category}) async {
     isloading = true;
     notifyListeners();
-    final response = await _apiServices.getcategoryProductsList(
+    final response = await homeservices.getcategoryProductsList(
         gmail: gmail, category: category);
     productsList = response;
     isloading = false;

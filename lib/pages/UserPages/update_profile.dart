@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery/commanWidget/comman_widget.dart';
+import 'package:food_delivery/comman/comman_widget.dart';
 import 'package:food_delivery/const/api_const.dart';
+import 'package:food_delivery/pages/UserPages/auth_services.dart';
 import 'package:food_delivery/provider/user_provider.dart';
-import 'package:food_delivery/services/api_user.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
@@ -74,7 +74,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     onPressd: () {
                       if (widget.data.password ==
                           updatePasswordController.text) {
-                        updateUserName(
+                        Authservices().updateUserName(
                             gmail: currentEmail.toString(),
                             name: updateNameController.text,
                             email: updateGmailController.text);

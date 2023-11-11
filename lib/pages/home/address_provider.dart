@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery/models/restaurantList_model.dart';
-import 'package:food_delivery/services/api_user.dart';
+import 'package:food_delivery/models/restaurantlist_model.dart';
+import 'package:food_delivery/pages/home/home_services.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AddressProvider extends ChangeNotifier {
   bool isloading = false;
 
-  double? lat = 0;
-  double? lng = 0;
+  double? lat;
+  double? lng;
 
   String street = "";
   String locality = "";
@@ -28,12 +29,13 @@ class AddressProvider extends ChangeNotifier {
   TextEditingController addaera = TextEditingController();
   TextEditingController addlandmark = TextEditingController();
 
-  final _apiServices = ApiServices();
+  final homeservices = Homeservices();
+  final Map<String, Marker> markerpont = {};
 
   Future<void> getRestaurants() async {
     isloading = true;
     notifyListeners();
-    final response = await _apiServices.getrestaurantResult();
+    final response = await homeservices.getrestaurantResult();
     _restaurantList = response;
     isloading = false;
     notifyListeners();
@@ -42,6 +44,12 @@ class AddressProvider extends ChangeNotifier {
   latlag(latitude, longitude) {
     lat = latitude;
     lng = longitude;
+    notifyListeners();
+  }
+
+  void addmarker(String markerid, LatLng location) {
+    var marker = Marker(markerId: MarkerId(markerid), position: location);
+    markerpont[markerid] = marker;
     notifyListeners();
   }
 

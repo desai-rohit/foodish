@@ -1,8 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery/pages/UserPages/auth_services.dart';
 import 'package:food_delivery/pages/UserPages/login_page.dart';
 import 'package:food_delivery/pages/UserPages/login_provider.dart';
-import 'package:food_delivery/services/api_user.dart';
 import 'package:provider/provider.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -144,7 +144,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         backgroundColor: Colors.transparent,
                       ),
                       onPressed: () {
-                        usersignup(
+                       Authservices().usersignup(
                                 name: provider.namecontroller.text,
                                 gmail: provider.gmailcontroller.text,
                                 password: provider.passworController.text,

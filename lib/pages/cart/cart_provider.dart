@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/const/api_const.dart';
 import 'package:food_delivery/models/add_cart.dart';
-import 'package:food_delivery/services/api_user.dart';
+import 'package:food_delivery/pages/cart/cart_services.dart';
 
 class CartProvider extends ChangeNotifier {
   bool isloading = false;
@@ -26,21 +26,21 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  final _apiServices = ApiServices();
+  final cartServices = CartServices();
   List<Addcart> _addCart = [];
   List<Addcart> get cartdata => _addCart;
 
   Future<void> getAllCart() async {
     isloading = true;
     notifyListeners();
-    final response = await _apiServices.getListaddcart(currentEmail);
+    final response = await cartServices.getListaddcart(currentEmail);
     _addCart = response;
     isloading = false;
     notifyListeners();
   }
 
   deletecart(id) {
-    deleteCart(id)
+    cartServices.deleteCart(id)
         .then((value) => getAllCart())
         .then((value) => cartdataid(""));
     notifyListeners();

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:food_delivery/commanWidget/comman_widget.dart';
+import 'package:food_delivery/comman/comman_widget.dart';
 import 'package:food_delivery/pages/bottom_nav/bottom_nav.dart';
 import 'package:food_delivery/provider/user_provider.dart';
 import 'package:lottie/lottie.dart';

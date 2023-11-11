@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery/services/api_user.dart';
+import 'package:food_delivery/pages/orderpage/order_services.dart';
 
 class OrderPageProvidr extends ChangeNotifier {
   bool isloading = false;
@@ -8,8 +8,7 @@ class OrderPageProvidr extends ChangeNotifier {
 
   String favoriteId = '';
   String cartDataId = '';
-  final _apiServices = ApiServices();
-
+ final orderServices = Orderservices();
   truefalse(truefalse) {
     isloading = truefalse;
     notifyListeners();
@@ -32,10 +31,7 @@ class OrderPageProvidr extends ChangeNotifier {
     }
   }
 
-  favoriteid(id) {
-    favoriteId = id;
-    notifyListeners();
-  }
+
 
   cartdataid(id) {
     cartDataId = id;
@@ -46,7 +42,7 @@ class OrderPageProvidr extends ChangeNotifier {
       price, itemcount, totalprice) async {
     isloading = true;
     notifyListeners();
-    await _apiServices.addcart(productsID, user, image, name, restorantName,
+    await orderServices.addcart(productsID, user, image, name, restorantName,
         gmail, price, itemcount, totalprice);
     isloading = false;
     notifyListeners();

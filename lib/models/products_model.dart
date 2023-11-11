@@ -42,7 +42,7 @@ class Products {
         category: json["category"],
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {                                                                                                                                                                                           
         "_id": id,
         "image": image,
         "foodName": foodName,

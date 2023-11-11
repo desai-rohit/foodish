@@ -1,11 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery/const/api_const.dart';
 import 'package:food_delivery/pages/cart/cart_provider.dart';
 import 'package:food_delivery/pages/favorite/favorite_provider.dart';
 import 'package:food_delivery/pages/home/address_provider.dart';
 import 'package:food_delivery/pages/home/home_provider.dart';
+import 'package:food_delivery/pages/orderpage/order_services.dart';
 import 'package:food_delivery/pages/orderpage/orderpage_provider.dart';
-import 'package:food_delivery/services/api_user.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -36,7 +37,8 @@ class _OrderPageState extends State<OrderPage> {
 
       for (int i = 0; i < favoriteProvider.favoritedata.length; i++) {
         if (favoriteProvider.favoritedata[i].productsId == widget.data.id) {
-          provider.favoriteid(favoriteProvider.favoritedata[i].productsId);
+          favoriteProvider
+              .favoriteid(favoriteProvider.favoritedata[i].productsId);
         }
       }
 
@@ -72,7 +74,8 @@ class _OrderPageState extends State<OrderPage> {
                       favoriteProvider.favdelete(favoriteProvider.favoriteId);
                     } else {
                       value.truefalse(true);
-                      addFavorite(
+                      Orderservices()
+                          .addFavorite(
                               widget.data.id.toString(),
                               currentEmail.toString(),
                               widget.data.image,
@@ -105,14 +108,12 @@ class _OrderPageState extends State<OrderPage> {
                     children: [
                       SizedBox(
                         height: 400,
-                        child: FadeInImage(
-                          placeholder: const AssetImage(
-                            "assets/animation/loading1.gif",
-                          ),
-                          image: NetworkImage(widget.data.image),
-                          imageErrorBuilder: (context, error, stackTrace) {
-                            return Image.asset("assets/image/error.png");
-                          },
+                        child: CachedNetworkImage(
+                          imageUrl: widget.data.image,
+                          placeholder: (context, url) =>
+                              const Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
                         ),
                       ),
                       Container(

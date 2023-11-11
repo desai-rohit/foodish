@@ -1,10 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery/const/api_const.dart';
 import 'package:food_delivery/pages/cart/cart_provider.dart';
+import 'package:food_delivery/pages/cart/cart_services.dart';
 import 'package:food_delivery/pages/home/home_provider.dart';
 import 'package:food_delivery/pages/payment/payment_page.dart';
-import 'package:food_delivery/services/api_user.dart';
-import 'package:food_delivery/commanWidget/comman_widget.dart';
+import 'package:food_delivery/comman/comman_widget.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
@@ -100,11 +101,23 @@ class _CartPageState extends State<CartPage> {
                                                     MainAxisAlignment
                                                         .spaceAround,
                                                 children: [
-                                                  Image.network(
-                                                    value.cartdata[index].image,
-                                                    cacheHeight: 100,
-                                                    cacheWidth: 100,
+                                                  CachedNetworkImage(
+                                                    height: 100,
+                                                    width: 100,
+                                                    imageUrl: value
+                                                        .cartdata[index].image,
+                                                    placeholder: (context,
+                                                            url) =>
+                                                        const CircularProgressIndicator(),
+                                                    errorWidget: (context, url,
+                                                            error) =>
+                                                        const Icon(Icons.error),
                                                   ),
+                                                  // Image.network(
+                                                  //   value.cartdata[index].image,
+                                                  //   cacheHeight: 100,
+                                                  //   cacheWidth: 100,
+                                                  // ),
                                                   Column(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -159,7 +172,8 @@ class _CartPageState extends State<CartPage> {
                                                                       .cartdata[
                                                                           index]
                                                                       .price);
-                                                                  updateCart(
+                                                                  CartServices()
+                                                                      .updateCart(
                                                                           value
                                                                               .cartdata[
                                                                                   index]
@@ -211,7 +225,8 @@ class _CartPageState extends State<CartPage> {
                                                                           index]
                                                                       .price);
 
-                                                                  updateCart(
+                                                                  CartServices()
+                                                                      .updateCart(
                                                                           value
                                                                               .cartdata[
                                                                                   index]
@@ -356,7 +371,7 @@ class _CartPageState extends State<CartPage> {
                         MaterialPageRoute(
                             builder: (context) => PaymentPage(
                                   lat: homeProvider.user!.address![0].lat,
-                                  lng: homeProvider.user!.address![0].lat,
+                                  lng: homeProvider.user!.address![0].lng,
                                   house: homeProvider
                                       .user!.address![0].flatHouseNo,
                                   area: homeProvider.user!.address![0].area,

@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery/const/api_const.dart';
 import 'package:food_delivery/models/current_user_model.dart';
 import 'package:food_delivery/models/user_model.dart';
+import 'package:food_delivery/pages/UserPages/auth_services.dart';
 import 'package:food_delivery/pages/bottom_nav/bottom_nav.dart';
-import 'package:food_delivery/services/api_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginProvider extends ChangeNotifier {
   bool isloading = false;
-  final _apiServices = ApiServices();
   //signup page controller
   TextEditingController namecontroller = TextEditingController();
   TextEditingController gmailcontroller = TextEditingController();
@@ -21,7 +20,7 @@ class LoginProvider extends ChangeNotifier {
   List<UserApi> _userlist = [];
   List<UserApi> get userListData => _userlist;
 
-  final _userServices = UserServices();
+  final authServices = Authservices();
   CurrentUserModel? currentUserModel;
 
   userloginSharedPrefrance(context) async {
@@ -41,7 +40,7 @@ class LoginProvider extends ChangeNotifier {
   Future<void> getuserall() async {
     isloading = true;
     notifyListeners();
-    final response = await _apiServices.getUser();
+    final response = await authServices.getUser();
     _userlist = response;
     isloading = false;
     notifyListeners();
@@ -50,10 +49,21 @@ class LoginProvider extends ChangeNotifier {
   Future<void> getUser() async {
     isloading = true;
     notifyListeners();
-    final response = await _userServices.getUserData(currentEmail);
+    final response = await authServices.getUserData(currentEmail);
     currentUserModel = response;
 
     isloading = false;
     notifyListeners();
+  }
+
+  Future<void> login(context) async {
+    isloading = true;
+    notifyListeners();
+   await authServices.userlogin(
+        gmail: logingmailcontroller.text,
+        password: loginpassworController.text,
+        context: context).then((value) => isloading=false);
+
+        notifyListeners();
   }
 }

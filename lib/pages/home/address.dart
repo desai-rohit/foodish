@@ -1,10 +1,11 @@
+
 import 'package:flutter/material.dart';
 import 'package:food_delivery/const/api_const.dart';
 import 'package:food_delivery/pages/home/address_provider.dart';
 import 'package:food_delivery/pages/bottom_nav/bottom_nav.dart';
+import 'package:food_delivery/pages/home/home_services.dart';
 
-import 'package:food_delivery/services/api_user.dart';
-import 'package:food_delivery/commanWidget/comman_widget.dart';
+import 'package:food_delivery/comman/comman_widget.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -19,7 +20,7 @@ class AddressLocation extends StatefulWidget {
 
 class _AddressLocationState extends State<AddressLocation> {
   GoogleMapController? googleMapController;
-  final Map<String, Marker> _marker = {};
+  //final Map<String, Marker> _marker = {};
 
   @override
   void initState() {
@@ -44,43 +45,63 @@ class _AddressLocationState extends State<AddressLocation> {
             absorbing: value.isloading,
             child: Scaffold(
               appBar: AppBar(
-                actions: [
-                  IconButton(
-                      onPressed: () {
-                        checkPermission(Permission.location, context);
-                      },
-                      icon: const Icon(Icons.location_city))
-                ],
+                title: const Text("Location"),
               ),
               body: Consumer<AddressProvider>(
                 builder: (context, provider, child) {
                   return Column(
                     children: [
                       Expanded(
-                        child: provider.lat == 0
-                            ? const Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.red,
-                                ),
-                              )
-                            : GoogleMap(
-                                onTap: (LatLng latlng) {
-                                  provider.latlag(
-                                      latlng.latitude, latlng.longitude);
+                        child:
 
-                                  addmarker("test1",
-                                      LatLng(provider.lat!, provider.lng!));
-                                  // });
-                                },
-                                onMapCreated: (controller) {
-                                  googleMapController = controller;
-                                },
-                                markers: _marker.values.toSet(),
-                                initialCameraPosition: CameraPosition(
-                                    target:
-                                        LatLng(provider.lat!, provider.lng!),
-                                    zoom: 15),
-                              ),
+                            //  provider.lat == 1
+                            //     ? GoogleMap(
+                            //         onTap: (LatLng latlng) {
+                            //           provider.latlag(
+                            //               latlng.latitude, latlng.longitude);
+
+                            //           provider.addmarker("test1",
+                            //               LatLng(provider.lat!, provider.lng!));
+                            //           // });
+                            //         },
+                            //         onMapCreated: (controller) {
+                            //           googleMapController = controller;
+                            //         },
+                            //         markers: provider.markerpont.values.toSet(),
+                            //         //_marker.values.toSet(),
+                            //         initialCameraPosition: CameraPosition(
+                            //             target:
+                            //                 LatLng(provider.lat!, provider.lng!),
+                            //             zoom: 1),
+                            //       )
+                            //     :
+
+                            GoogleMap(
+                          myLocationButtonEnabled: true,
+                          myLocationEnabled: true,
+
+                          onTap: (LatLng latlng) {
+                            provider.latlag(latlng.latitude, latlng.longitude);
+
+                            provider.addmarker(
+                                "test1", LatLng(provider.lat!, provider.lng!));
+                          },
+                          onMapCreated: (controller) {
+                            googleMapController = controller;
+                          },
+                          markers: provider.markerpont.values.toSet(),
+                          //_marker.values.toSet(),
+                          initialCameraPosition: CameraPosition(
+                              target: provider.lat == null
+                                  ? const LatLng(0, 0)
+                                  : LatLng(provider.lat!, provider.lng!),
+                              zoom: provider.lat==null?2: 17),
+
+                          zoomControlsEnabled: true,
+                          zoomGesturesEnabled: true,
+                          scrollGesturesEnabled: true,
+                          compassEnabled: true,
+                        ),
                       ),
                       Text(provider.street),
                       button(
@@ -176,7 +197,7 @@ class _AddressLocationState extends State<AddressLocation> {
                                                     style: ElevatedButton.styleFrom(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .symmetric(
+                                                                .symmetric(
                                                                 vertical: 16),
                                                         shape:
                                                             RoundedRectangleBorder(
@@ -187,7 +208,7 @@ class _AddressLocationState extends State<AddressLocation> {
                                                         backgroundColor:
                                                             Colors.red),
                                                     onPressed: () {
-                                                      updateUser(
+                                                     Homeservices().updateUser(
                                                               gmail: currentEmail
                                                                   .toString(),
                                                               lat: provider.lat
@@ -232,6 +253,7 @@ class _AddressLocationState extends State<AddressLocation> {
                   );
                 },
               ),
+             
             ),
           ),
         ),
@@ -250,38 +272,40 @@ class _AddressLocationState extends State<AddressLocation> {
     });
   }
 
-  void addmarker(String markerid, LatLng location) {
-    var marker = Marker(markerId: MarkerId(markerid), position: location);
-    _marker[markerid] = marker;
+  // void addmarker(String markerid, LatLng location) {
+  //   AddressProvider provider =
+  //       Provider.of<AddressProvider>(context, listen: false);
+  //   var marker = Marker(markerId: MarkerId(markerid), position: location);
+  //   //provider.markerpont[markerid] = marker;
+  //   _marker[markerid] = marker;
 
-    setState(() {});
-  }
+  // }
 
   Future<void> checkPermission(
       Permission permission, BuildContext context) async {
     AddressProvider provider =
         Provider.of<AddressProvider>(context, listen: false);
     final status = await permission.request();
+
     if (status.isGranted) {
-      await Geolocator.isLocationServiceEnabled()
-          .then((enabled) => {if (enabled) {} else {}});
+      try {
+        Position position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high);
+        provider.lat = position.latitude;
+        provider.lng = position.longitude;
+        provider.addmarker("test1", LatLng(provider.lat!, provider.lng!));
 
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-      provider.lat = position.latitude;
-      provider.lng = position.longitude;
-      addmarker("test1", LatLng(provider.lat!, provider.lng!));
+        // ignore: use_build_context_synchronously
+        Provider.of<AddressProvider>(context, listen: false)
+            .latlag(position.latitude, position.longitude);
 
-      // ignore: use_build_context_synchronously
-      Provider.of<AddressProvider>(context, listen: false)
-          .latlag(position.latitude, position.longitude);
-
-      CameraPosition(
-          target: LatLng(position.latitude, position.longitude), zoom: 15);
-
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Permission is Granted")));
+        CameraPosition(
+            target: LatLng(position.latitude, position.longitude), zoom: 15);
+      } catch (e) {
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Gps Not Enabled")));
+      }
     } else if (status.isDenied) {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context)

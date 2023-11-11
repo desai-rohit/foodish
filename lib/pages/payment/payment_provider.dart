@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
 class PaymentProvider extends ChangeNotifier {
-  bool cashOnDSelivery = false;
-  bool payment = false;
+  bool cardpayment = false;
+  bool upipayment = false;
 
   chash() {
-    cashOnDSelivery = true;
-    payment = false;
+    cardpayment = true;
+    upipayment = false;
     notifyListeners();
   }
 
   paymentui() {
-    cashOnDSelivery = false;
-    payment = true;
+    cardpayment = false;
+    upipayment = true;
     notifyListeners();
   }
 }

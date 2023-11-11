@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery/pages/favorite/favorite_provider.dart';
 import 'package:lottie/lottie.dart';
@@ -49,27 +50,48 @@ class _FavoritePageState extends State<FavoritePage> {
                     ],
                   )
                 : Scaffold(
+                    appBar: AppBar(
+                      title: const Text("Favorite"),
+                      centerTitle: true,
+                    ),
                     body: ListView.builder(
                         itemCount: value.favoritedata.length,
                         itemBuilder: (context, index) {
-                          return ListTile(
-                            trailing: IconButton(
-                                onPressed: () {
-                                  value.favdelete(
-                                      value.favoritedata[index].productsId);
-                                },
-                                icon: const Icon(
-                                  Icons.favorite,
-                                  color: Colors.red,
-                                )),
-                            leading: Image.network(
-                              value.favoritedata[index].image,
-                              width: 100,
-                              height: 100,
-                            ),
-                            title: Text(value.favoritedata[index].name),
-                            subtitle: Text(
-                              "Rs ${value.favoritedata[index].price}",
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ListTile(
+                              onTap: () {},
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16)),
+                              tileColor: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryContainer,
+                              trailing: IconButton(
+                                  onPressed: () {
+                                    value.favdelete(
+                                        value.favoritedata[index].productsId);
+                                  },
+                                  icon: const Icon(
+                                    Icons.favorite,
+                                    color: Colors.red,
+                                  )),
+                              leading: CachedNetworkImage(
+                                imageUrl: value.favoritedata[index].image,
+                                placeholder: (context, url) =>
+                                    const CircularProgressIndicator(),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
+                              ),
+
+                              // Image.network(
+                              //   value.favoritedata[index].image,
+                              //   width: 100,
+                              //   height: 100,
+                              // ),
+                              title: Text(value.favoritedata[index].name),
+                              subtitle: Text(
+                                "Rs ${value.favoritedata[index].price}",
+                              ),
                             ),
                           );
                         }),

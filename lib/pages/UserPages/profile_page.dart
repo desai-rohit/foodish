@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery/commanWidget/comman_widget.dart';
+import 'package:food_delivery/comman/comman_widget.dart';
 import 'package:food_delivery/const/api_const.dart';
 import 'package:food_delivery/pages/UserPages/login_page.dart';
 import 'package:food_delivery/pages/UserPages/login_provider.dart';
-import 'package:food_delivery/pages/address/add_address.dart';
 import 'package:food_delivery/pages/myOrders/complete_order_page.dart';
 import 'package:food_delivery/pages/UserPages/update_profile.dart';
 import 'package:provider/provider.dart';
@@ -158,31 +157,31 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ],
                     ),
-                    Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const AddAddress()));
-                          },
-                          child: ListTile(
-                            title: value.currentUserModel!.address![0]
-                                        .flatHouseNo ==
-                                    ""
-                                ? const Text("Address")
-                                : Text(
-                                    value.currentUserModel!.address![0].area),
-                            subtitle: Text(value
-                                .currentUserModel!.address![0].flatHouseNo),
-                            leading: const Icon(Icons.house),
-                            trailing:
-                                const Icon(Icons.arrow_forward_ios_outlined),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Column(
+                    //   children: [
+                    //     GestureDetector(
+                    //       onTap: () {
+                    //         Navigator.push(
+                    //             context,
+                    //             MaterialPageRoute(
+                    //                 builder: (context) => const AddAddress()));
+                    //       },
+                    //       child: ListTile(
+                    //         title: value.currentUserModel!.address![0]
+                    //                     .flatHouseNo ==
+                    //                 ""
+                    //             ? const Text("Address")
+                    //             : Text(
+                    //                 value.currentUserModel!.address![0].area),
+                    //         subtitle: Text(value
+                    //             .currentUserModel!.address![0].flatHouseNo),
+                    //         leading: const Icon(Icons.house),
+                    //         trailing:
+                    //             const Icon(Icons.arrow_forward_ios_outlined),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
               ),

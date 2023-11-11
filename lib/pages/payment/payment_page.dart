@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery/const/api_const.dart';
 import 'package:food_delivery/pages/UserPages/login_provider.dart';
 import 'package:food_delivery/pages/cart/cart_provider.dart';
+import 'package:food_delivery/pages/payment/order_success.dart';
 import 'package:food_delivery/pages/payment/payment_provider.dart';
-import 'package:food_delivery/services/api_user.dart';
+import 'package:food_delivery/pages/payment/payment_services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -16,13 +17,15 @@ class PaymentPage extends StatefulWidget {
   String house;
   String area;
   String landmark;
+  
   PaymentPage(
       {super.key,
       required this.lat,
       required this.lng,
       required this.house,
       required this.area,
-      required this.landmark});
+      required this.landmark,
+      });
 
   @override
   State<PaymentPage> createState() => _PaymentPageState();
@@ -62,10 +65,11 @@ class _PaymentPageState extends State<PaymentPage> {
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     // Do something when payment succeeds
+ 
     CartProvider cartProvider =
         Provider.of<CartProvider>(context, listen: false);
     for (var i = 0; i < cartProvider.cartdata.length; i++) {
-      await order(
+      await PaymentServices().order(
               productid: cartProvider.cartdata[i].productsId,
               name: cartProvider.cartdata[i].name,
               gmail: cartProvider.cartdata[i].user,
@@ -81,10 +85,15 @@ class _PaymentPageState extends State<PaymentPage> {
               area: widget.area,
               landmark: widget.landmark,
               orderid: cartProvider.orderId,
-              paymentid: response.paymentId)
-          .then((value) => Provider.of<CartProvider>(context, listen: false)
-              .deletecart(cartProvider.cartdata[i].productsId));
+              paymentid: response.paymentId,
+              quantity: cartProvider.cartdata[i].itemcount
+              ).then((value) => Provider.of<CartProvider>(context, listen: false)
+              .deletecart(cartProvider.cartdata[i].productsId)).then((value) =>    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const OrderSuccess()),
+        (route) => false));
     }
+
+    
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
@@ -109,15 +118,15 @@ class _PaymentPageState extends State<PaymentPage> {
             children: [
               GestureDetector(
                 onTap: () {
-                  setState(() {
-                    value.chash();
-                  });
+                  value.chash();
                 },
                 child: ListTile(
                   title: const Text("Credit Card / Debit Card"),
                   leading: IconButton(
-                      onPressed: () {},
-                      icon: value.cashOnDSelivery == true
+                      onPressed: () {
+                        value.chash();
+                      },
+                      icon: value.cardpayment == true
                           ? const Icon(
                               Icons.circle,
                               color: Colors.blue,
@@ -128,15 +137,15 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
               GestureDetector(
                 onTap: () {
-                  setState(() {
-                    value.paymentui();
-                  });
+                  value.paymentui();
                 },
                 child: ListTile(
                   title: const Text("UPI  Payment"),
                   leading: IconButton(
-                      onPressed: () {},
-                      icon: value.payment == true
+                      onPressed: () {
+                        value.paymentui();
+                      },
+                      icon: value.upipayment == true
                           ? const Icon(
                               Icons.circle,
                               color: Colors.blue,
@@ -176,9 +185,10 @@ class _PaymentPageState extends State<PaymentPage> {
                     };
 
                     _razorpay.open(options);
+                    
                   },
                   child: Text(
-                    value.payment == true ? "Payment" : "Cash On Delivery",
+                    value.upipayment == true ? " UPI Payment" : "Card Payment",
                     style: const TextStyle(fontSize: 18, color: Colors.white),
                   ))),
         );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:food_delivery/commanWidget/comman_widget.dart';
+import 'package:food_delivery/comman/comman_widget.dart';
 import 'package:food_delivery/pages/myOrders/myorder_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -76,22 +75,22 @@ class _OrderDetailsState extends State<OrderDetails> {
                     ],
                   ),
                 ),
-                RatingBar.builder(
-                  initialRating: double.parse(widget.data.rateing),
-                  minRating: 1,
-                  direction: Axis.horizontal,
-                  allowHalfRating: true,
-                  itemCount: 5,
-                  itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-                  itemBuilder: (context, _) => const Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                  ),
-                  onRatingUpdate: (rating) {
-                    //value.prodcutsRateing = rating.toString();
-                    value.fetchrateing(rating.toString());
-                  },
-                ),
+                // RatingBar.builder(
+                //   initialRating: double.parse(widget.data.rateing),
+                //   minRating: 1,
+                //   direction: Axis.horizontal,
+                //   allowHalfRating: true,
+                //   itemCount: 5,
+                //   itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                //   itemBuilder: (context, _) => const Icon(
+                //     Icons.star,
+                //     color: Colors.amber,
+                //   ),
+                //   onRatingUpdate: (rating) {
+                //     //value.prodcutsRateing = rating.toString();
+                //     value.fetchrateing(rating.toString());
+                //   },
+                // ),
                 const SizedBox(
                   height: 24,
                 ),

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery/pages/myOrders/myorder_provider.dart';
 import 'package:food_delivery/pages/myOrders/order_details.dart';
@@ -45,8 +46,15 @@ class _CompleteOrderPageState extends State<CompleteOrderPage> {
                     itemBuilder: (context, index) {
                       return value.orderListData[index].orderaccepted == false
                           ? ListTile(
-                              leading: Image.network(
-                                  value.orderListData[index].image),
+                              leading: CachedNetworkImage(
+                                imageUrl: value.orderListData[index].image,
+                                placeholder: (context, url) =>
+                                    const CircularProgressIndicator(),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
+                              ),
+                              // Image.network(
+                              //     value.orderListData[index].image),
                               title: Text(value.orderListData[index].foodname),
                               subtitle: Text(
                                   "RS ${value.orderListData[index].countTotalPrice}"),
@@ -61,10 +69,16 @@ class _CompleteOrderPageState extends State<CompleteOrderPage> {
                 ListView.builder(
                     itemCount: value.orderListData.length,
                     itemBuilder: (context, index) {
-                      return value.orderListData[index].ordership == true
+                      return value.orderListData[index].ordership == false &&
+                              value.orderListData[index].orderaccepted == true
                           ? ListTile(
-                              leading: Image.network(
-                                  value.orderListData[index].image),
+                              leading: CachedNetworkImage(
+                                imageUrl: value.orderListData[index].image,
+                                placeholder: (context, url) =>
+                                    const CircularProgressIndicator(),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
+                              ),
                               title: Text(value.orderListData[index].foodname),
                               subtitle: Text(
                                   "RS ${value.orderListData[index].countTotalPrice}"),
@@ -94,8 +108,13 @@ class _CompleteOrderPageState extends State<CompleteOrderPage> {
                                             )));
                               },
                               child: ListTile(
-                                leading: Image.network(
-                                    value.orderListData[index].image),
+                                leading: CachedNetworkImage(
+                                  imageUrl: value.orderListData[index].image,
+                                  placeholder: (context, url) =>
+                                      const CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                ),
                                 title:
                                     Text(value.orderListData[index].foodname),
                                 subtitle: Text(

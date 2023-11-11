@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery/const/category_image.dart';
 import 'package:food_delivery/mytheme/my_colors.dart';
@@ -32,6 +33,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     _pageController = PageController(viewportFraction: 0.8);
     return Consumer<HomeProvider>(builder: (context, value, child) {
       return Stack(children: [
@@ -90,35 +92,19 @@ class _HomePageState extends State<HomePage> {
                                     margin: EdgeInsets.all(margin),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(24),
-                                      child: Image.network(
-                                        loadingBuilder: (BuildContext context,
-                                            Widget child,
-                                            ImageChunkEvent? loadingProgress) {
-                                          if (loadingProgress == null) {
-                                            return child;
-                                          }
-                                          return Center(
-                                            child: CircularProgressIndicator(
-                                              value: loadingProgress
-                                                          .expectedTotalBytes !=
-                                                      null
-                                                  ? loadingProgress
-                                                          .cumulativeBytesLoaded /
-                                                      loadingProgress
-                                                          .expectedTotalBytes!
-                                                  : null,
-                                            ),
-                                          );
-                                        },
-                                        errorBuilder: (BuildContext context,
-                                            Object exception,
-                                            StackTrace? stackTrace) {
-                                          return const Text('😢');
-                                        },
-                                        value.slideImageData[index].imges,
-                                        fit: BoxFit.fill,
-                                        cacheWidth: 300,
-                                        cacheHeight: 250,
+                                      child: CachedNetworkImage(
+                                        height: 250,
+                                        width: 300,
+                                        imageUrl:
+                                            value.slideImageData[index].imges,
+                                        progressIndicatorBuilder:
+                                            (context, url, downloadProgress) =>
+                                                Center(
+                                          child: CircularProgressIndicator(
+                                              value: downloadProgress.progress),
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            const Icon(Icons.error),
                                       ),
                                     ),
                                   );
@@ -321,10 +307,8 @@ class _HomePageState extends State<HomePage> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Image.network(
-                                                  value.productsListData[index]
-                                                      .image,
-                                                  height: MediaQuery.of(context)
+                                                CachedNetworkImage(
+                                                     height: MediaQuery.of(context)
                                                           .size
                                                           .height *
                                                       0.15,
@@ -332,9 +316,36 @@ class _HomePageState extends State<HomePage> {
                                                           .size
                                                           .height *
                                                       0.15,
-                                                  cacheHeight: 115,
-                                                  cacheWidth: 115,
+                                                  imageUrl:
+                                                      value.productsListData[index]
+                                                      .image,
+                                                  progressIndicatorBuilder: (context,
+                                                          url,
+                                                          downloadProgress) =>
+                                                      Center(
+                                                        child: CircularProgressIndicator(
+                                                            value:
+                                                                downloadProgress
+                                                                    .progress),
+                                                      ),
+                                                  errorWidget: (context, url,
+                                                          error) =>
+                                                      const Icon(Icons.error),
                                                 ),
+                                                // Image.network(
+                                                //   value.productsListData[index]
+                                                //       .image,
+                                                //   height: MediaQuery.of(context)
+                                                //           .size
+                                                //           .height *
+                                                //       0.15,
+                                                //   width: MediaQuery.of(context)
+                                                //           .size
+                                                //           .height *
+                                                //       0.15,
+                                                //   cacheHeight: 115,
+                                                //   cacheWidth: 115,
+                                                // ),
                                                 Text(
                                                   textAlign: TextAlign.center,
                                                   value.productsListData[index]
