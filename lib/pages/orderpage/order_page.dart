@@ -67,6 +67,8 @@ class _OrderPageState extends State<OrderPage> {
         child: Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: AppBar(
+            title: const Text("Emart"),
+            centerTitle: true,
             actions: [
               IconButton(
                   onPressed: () {

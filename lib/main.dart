@@ -12,6 +12,7 @@ import 'package:food_delivery/pages/orderpage/orderpage_provider.dart';
 import 'package:food_delivery/pages/search/searchprovider.dart';
 import 'package:food_delivery/pages/payment/payment_provider.dart';
 import 'package:food_delivery/pages/spalshscreen/splash_screen.dart';
+import 'package:food_delivery/provider/provider_internet.dart';
 import 'package:food_delivery/provider/user_provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +31,7 @@ void main() {
     ChangeNotifierProvider(create: (_) => PaymentProvider()),
     ChangeNotifierProvider(create: (_) => LoginProvider()),
     ChangeNotifierProvider(create: (_) => CartProvider()),
+    ChangeNotifierProvider(create: (_) => ProviderInternet()),
   ], child: const MyApp()));
 }
 
@@ -46,8 +48,6 @@ class _MyAppState extends State<MyApp> {
     getValidationdata();
     currentuseremail();
 
-    
-
     super.initState();
   }
 
@@ -62,40 +62,12 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<ConnectivityResult>(
-        stream: Connectivity().onConnectivityChanged,
-        builder: (context, snapshot) {
-          return Consumer<UserProvider>(builder: (context, value, child) {
-            return MaterialApp(
-                debugShowCheckedModeBanner: false,
-                title: 'Flutter Demo',
-                theme: AppTheme.lightTheme(),
-                darkTheme: AppTheme.darkTheme(),
-                themeMode: ThemeMode.system,
-                home: snapshot.data == ConnectivityResult.none
-                    ? Scaffold(
-                        body: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Center(
-                              child: Lottie.asset(
-                                'assets/animation/no_internet.json',
-                                width: 250,
-                                height: 200,
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                            const Text(
-                              textAlign: TextAlign.center,
-                              "Please Check Internet Connection",
-                              style: TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                      )
-                    : const SpalshScreen());
-          });
-        });
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: AppTheme.lightTheme(),
+        darkTheme: AppTheme.darkTheme(),
+        themeMode: ThemeMode.system,
+        home: const SpalshScreen());
   }
 }

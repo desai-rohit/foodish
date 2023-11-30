@@ -4,6 +4,9 @@ import 'package:food_delivery/pages/cart/cart_page.dart';
 import 'package:food_delivery/pages/favorite/favorite_page.dart';
 import 'package:food_delivery/pages/UserPages/profile_page.dart';
 import 'package:food_delivery/pages/home/home_page.dart';
+import 'package:food_delivery/provider/no_internet.dart';
+import 'package:food_delivery/provider/provider_internet.dart';
+import 'package:provider/provider.dart';
 
 class BottomNav extends StatefulWidget {
   const BottomNav({
@@ -22,6 +25,14 @@ class _BottomNavState extends State<BottomNav> {
     const FavoritePage(),
     const ProfilePage()
   ];
+
+  @override
+  void initState() {
+    Provider.of<ProviderInternet>(context, listen: false).startMonitoring();
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,13 +40,15 @@ class _BottomNavState extends State<BottomNav> {
       body:
           //Expanded(child: pages.elementAt(index)),
 
-          Container(
-        color: Colors.transparent,
-        child: IndexedStack(
-          index: index,
-          children: pages,
-        ),
-      ),
+          Consumer<ProviderInternet>(builder: (context, value, child) {
+        return value.isOnline? Container(
+          color: Colors.transparent,
+          child: IndexedStack(
+            index: index,
+            children: pages,
+          ),
+        ):const NoInternet();
+      }),
       bottomNavigationBar: CurvedNavigationBar(
         height: 60,
         backgroundColor: Colors.transparent,
