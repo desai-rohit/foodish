@@ -19,3 +19,6 @@
  Foodish Food Delivery App APK LInk
   
 https://drive.google.com/file/d/18v9GZzi5kbkZMsZLWDs8PzXR9JQkSKJC/view?usp=sharing
+
+username:-rohit@gmail.com
+password:-123456
